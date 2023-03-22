@@ -1,4 +1,5 @@
 import 'package:codigo6_future/page/home_page.dart';
+import 'package:codigo6_future/page/profile_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {

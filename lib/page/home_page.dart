@@ -1,3 +1,5 @@
+import 'package:codigo6_future/page/profile_page.dart';
+import 'package:codigo6_future/services/my_service.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -6,42 +8,43 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String name = "Mantequilla el utlimo de los mexicanos.";
-
-  Future<String> getFullName() async {
-    return Future.delayed(const Duration(seconds: 3), () {
-      return "Juan Carlos Montes";
-    });
-  }
-
-  Future<List> getProducts() async {
-    return Future.delayed(const Duration(seconds: 5), () {
-      return ["Camisa", "Zapatos", "Corbata", "Traje"];
-    });
-  }
+  MyService myService = MyService();
 
   @override
   Widget build(BuildContext context) {
-    // getFullName().then( (value) {
-    //   print("Estoy dentro del future");
-    //   name = value;
-    //   setState(() {});
-    // });
-
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "La tiendita de Ramón",
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+            },
+            icon: const Icon(
+              Icons.person,
+            ),
+          ),
+        ],
+      ),
       body: Center(
         child: FutureBuilder(
-          future: getProducts(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.hasData) {
-              List products = snapshot.data;
+          future: myService.getUsers(),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snap) {
+            if (snap.hasData) {
+              List<Map<String, dynamic>> users = snap.data;
               return ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  return Text(products[index]);
-                },
-                itemCount: products.length,
-                //shrinkWrap: true,
-              );
+                  itemCount: users.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(users[index]["fullname"]),
+                      subtitle: Text(users[index]["email"]),
+                      leading: CircleAvatar(
+                        child: Text(users[index]["fullname"][0]),
+                      ),
+                    );
+                  });
             }
             return const CircularProgressIndicator();
           },
